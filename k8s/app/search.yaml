@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: search
+  namespace: adventurer
+  labels:
+    app: search
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+  selector:
+    app: search
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search
+  namespace: adventurer
+  labels:
+    app: search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: search
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: search
+          image: localhost:32000/adventurer/search:latest
+          env:
+            - name: PORT
+              value: "80"
+            - name: BASE
+              value: /v0
+            - name: ES_NODE
+              value: http://elasticsearch.dev:9200
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+            requests:
+              cpu: "10m"
+              memory: "32Mi" 
