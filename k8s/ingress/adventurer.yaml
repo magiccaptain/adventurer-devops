@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adventurer-dev
+  namespace: adventurer
+spec:
+  rules:
+  - host: search.dev.stacktop.cn
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: search
+            port:
+              number: 80
