@@ -15,3 +15,23 @@ spec:
             name: search
             port:
               number: 80
+  - host: finance.dev.stacktop.cn
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: finance
+            port:
+              number: 80
+  - host: kanban.dev.stacktop.cn
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kanban
+            port:
+              number: 80
