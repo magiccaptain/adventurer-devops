@@ -1,31 +1,33 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kanban
+  name: tower
   namespace: adventurer
   labels:
-    app: kanban
+    app: tower
 spec:
   type: ClusterIP
   ports:
     - name: http
       port: 80
+      targetPort: 80
   selector:
-    app: kanban
+    app: tower
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kanban
+  name: tower
   namespace: adventurer
   labels:
-    app: kanban
+    app: tower
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kanban
+      app: tower
   minReadySeconds: 10
   strategy:
     type: RollingUpdate
@@ -35,19 +37,24 @@ spec:
   template:
     metadata:
       labels:
-        app: kanban
+        app: tower
     spec:
       restartPolicy: Always
       containers:
-        - name: kanban
-          image: localhost:32000/adventurer/kanban:dev
+        - name: tower
+          image: localhost:32000/adventurer/tower:latest
+          imagePullPolicy: Always
           env:
-            - name: PORT
-              value: "80"
-            - name: BASE
-              value: /v0
-            - name: MONGODB_CONNECTION
-              value: mongodb://mongo.dev/kanban-development
+            - name: LOGIN_URL
+              value: https://adventurer.account-uat.stargate.36node.com/login?appId=60521fd8d7fcb30011764998
+            - name: AUTH_ENDPOINT
+              value: https://api.stargate.36node.com/auth/uat
+            - name: KANBAN_ENDPOINT
+              value: https://kanban.dev.stacktop.cn
+            - name: NODE_ENV
+              value: development
+            - name: NAMESPACE
+              value: adventurer
           ports:
             - name: http
               containerPort: 80
@@ -57,4 +64,4 @@ spec:
               memory: "1Gi"
             requests:
               cpu: "10m"
-              memory: "32Mi" 
+              memory: "32Mi"

@@ -2,7 +2,7 @@
 
 TAG=latest
 
-DOCKER_REGISTRY=10.242.0.7:32000
+DOCKER_REGISTRY=localhost:32000
 
 buildSearch(){
   # docker repo
@@ -37,16 +37,29 @@ buildFinance(){
 buildKanban(){
   # docker repo
   DOCKER_REPO=$DOCKER_REGISTRY/adventurer/kanban
-  echo "Starting build search"
+  echo "Starting build kanban"
 
   # tag image
   docker build \
-    --build-arg APP_VERSION=${TAG} \
     --build-arg http_proxy=http://10.242.0.4:8118 \
     --build-arg https_proxy=http://10.242.0.4:8118 \
-    -t $DOCKER_REPO:$TAG /home/sc/projects/adventurer-tech/kanban
+    -t $DOCKER_REPO:$TAG /home/sc/projects/adventurer-tech/kanban 
 
   docker push $DOCKER_REPO:$TAG
+}
+
+buildTower(){
+  DOCKER_REPO=$DOCKER_REGISTRY/adventurer/tower
+  echo "Starting build tower"
+
+  # tag image
+  docker build \
+    --build-arg http_proxy=http://10.242.0.4:8118 \
+    --build-arg https_proxy=http://10.242.0.4:8118 \
+    -t $DOCKER_REPO:$TAG /home/sc/projects/adventurer-tech/tower 
+
+  docker push $DOCKER_REPO:$TAG
+
 }
 
 buildAccounting(){
@@ -56,7 +69,8 @@ buildAccounting(){
 }
 
 
-buildSearch
-buildAccounting
-buildFinance
+# buildSearch
+# buildAccounting
+# buildFinance
 buildKanban
+buildTower
